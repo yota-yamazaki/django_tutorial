@@ -39,12 +39,22 @@ wheels = [
 ]
 
 [[package]]
+name = "django-grappelli"
+version = "4.0.2"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/d9/f9/c6bf4a6e067160bd8920fa4c9ff837c0f5db8ad3c4362433b426478dc420/django-grappelli-4.0.2.tar.gz", hash = "sha256:cf753ba830b5597a5a453bedcf6358c1538368c916d2ed1ae7b4cee1a660fe09", size = 11062665, upload-time = "2025-04-28T13:48:00.329Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/79/66/bec8c43767f830d8c4884d8350d81e28043d3a04364b9fca43946d98a47e/django_grappelli-4.0.2-py2.py3-none-any.whl", hash = "sha256:ed0a87a3cf025ad359fffb995b5d37d0bae5b4fd32eb0f06428c8a7a47702594", size = 1823578, upload-time = "2025-04-28T13:48:04.279Z" },
+]
+
+[[package]]
 name = "django-tutorial"
 version = "0.1.0"
 source = { virtual = "." }
 dependencies = [
     { name = "django" },
     { name = "django-debug-toolbar" },
+    { name = "django-grappelli" },
     { name = "pyright" },
     { name = "ruff" },
 ]
@@ -53,6 +63,7 @@ dependencies = [
 requires-dist = [
     { name = "django", specifier = ">=5.2.8" },
     { name = "django-debug-toolbar", specifier = ">=6.1.0" },
+    { name = "django-grappelli", specifier = ">=4.0.2" },
     { name = "pyright", specifier = ">=1.1.407" },
     { name = "ruff", specifier = ">=0.14.3" },
 ]
