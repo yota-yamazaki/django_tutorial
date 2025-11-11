@@ -5,6 +5,11 @@ from django.utils import timezone
 from django.contrib import admin
 
 class Question(models.Model):
+
+    class Meta:
+        verbose_name = verbose_name_plural = '問'
+
+
     question_text = models.CharField(max_length=200)
     pub_date = models.DateTimeField("date published")
 
