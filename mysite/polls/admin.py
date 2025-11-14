@@ -1,7 +1,10 @@
+from random import choice
+
 from django.contrib import admin
 from django.contrib import messages
 from django.utils.translation import ngettext
 from django.db.models import F
+from .forms import ChoiceAdminForm
 
 from .models import Question, Choice
 
@@ -22,6 +25,7 @@ class QuestionAdmin(admin.ModelAdmin):
 
 class ChoiceAdmin(admin.ModelAdmin):
     actions = ['increment_votes']
+    form = ChoiceAdminForm
 
     @admin.action(description="投票数を1増やします")
     def increment_votes(self, request, queryset):
