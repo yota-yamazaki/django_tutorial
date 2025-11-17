@@ -1,9 +1,10 @@
 from django.db.models import F
 from django.http import HttpResponseRedirect
 from django.shortcuts import render, get_object_or_404
-from django.urls import reverse
+from django.urls import reverse, reverse_lazy
 from django.views import generic
 from django.utils import timezone
+from . import forms
 
 from .models import Question, Choice
 
@@ -27,6 +28,12 @@ class DetailView(generic.DetailView):
         """
         return Question.objects.filter(pub_date__lte=timezone.now())
 
+class EditView(generic.UpdateView):
+    model = Question
+    fields = ["question_text"]
+    form_model = forms.QuestionEditForm
+    template_name = "polls/edit.html"
+    success_url = reverse_lazy("polls:index")
 
 class ResultsView(generic.DetailView):
     model = Question
