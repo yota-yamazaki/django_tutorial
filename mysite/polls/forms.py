@@ -14,5 +14,4 @@ class QuestionForm(forms.ModelForm):
         fields = ["question_text"]
 
 class QuestionEditForm(QuestionForm):
-    class Meta(QuestionForm.Meta):
-        fields = ["question_text"]
+    pass
