@@ -30,10 +30,20 @@
         {% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
         {% if flash_message %}<p><strong>{{ flash_message }}</strong></p>{% endif %}
 
-        <div x-data="{form_text:''}" x-modelable="form_text">
+        <div x-data="{form_text:'', text_empty: false}" x-modelable="form_text" x-model="question_text">
             <label for="title_input">タイトル</label>
-            <input id="title_input" name="question_text" type="text" x-model="question_text" maxlength="200" required="" >
+            <input 
+                id="title_input" 
+                name="question_text" 
+                type="text" 
+                maxlength="200" 
+                required="" 
+                x-model="form_text"
+                @input="text_empty = form_text == ''">
 
+            <button type='button' @click="form_text='たとえば'">タイトルを入れる</button>
+
+            <div x-show="text_empty">error</div>
             {{ form.question_text.errors }}
         </div>
 
