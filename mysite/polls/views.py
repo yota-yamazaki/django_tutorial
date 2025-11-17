@@ -62,6 +62,25 @@ def update(request, pk):
 
     return render(request, 'polls/detail.html', {"question": question, 'form': form})
 
+def choice_create(request, question_id):
+    question = get_object_or_404(Question, pk=question_id)
+    form = forms.ChoiceForm(request.POST)
+    if form.is_valid():
+        text = form.cleaned_data["choice_text"]
+        Choice.objects.create(
+            question=question,
+            choice_text=text,
+            )
+        return redirect("polls:detail", pk=question.pk)
+    else:
+        form = forms.ChoiceForm()
+
+    return render(request, "polls/detail.html", {
+        "question": question,
+        "form": form,
+    })
+
+
 
 def vote(request, question_id):
     question = get_object_or_404(Question, pk=question_id)

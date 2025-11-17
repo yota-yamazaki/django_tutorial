@@ -1,3 +1,4 @@
+from dataclasses import fields
 from django import forms
 from . import models
 
@@ -15,3 +16,8 @@ class QuestionForm(forms.ModelForm):
 
 class QuestionEditForm(QuestionForm):
     pass
+
+class ChoiceForm(forms.ModelForm):
+    class Meta:
+        model = models.Choice
+        fields = ["choice_text"]

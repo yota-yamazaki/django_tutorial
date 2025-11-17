@@ -4,18 +4,29 @@
 
 <a href="{% url 'polls:index' %}">戻る</a>
 <div x-data="{ question_text: '{{ question.question_text|escapejs }}' }">
-    <form action="{% url 'polls:vote' question.id %}" method="post">
-        {% csrf_token %}
-        <fieldset>
+    <fieldset>
+        <form action="{% url 'polls:vote' question.id %}" method="post">
+            {% csrf_token %}
             <legend><h1 x-text="question_text"></h1></legend>
             {% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
             {% for choice in question.choice_set.all %}
             <input type="radio" name="choice" id="choice{{ forloop.counter }}" value="{{ choice.id }}">
             <label for="choice{{ forloop.counter }}">{{ choice.choice_text }}</label><br>
             {% endfor %}
-        </fieldset>
-        <input type="submit" value="投票">
-    </form>
+            <input type="submit" value="投票">
+        </form>
+
+        <div x-data="{ form_show: false }">
+            <button type="button" x-show="!form_show" @click="form_show = ! form_show">＋</button>
+            <button type="button" x-show="form_show" @click="form_show = ! form_show">閉じる</button>
+            <form id="choice_create" action="{% url 'polls:choice_create' question.id %}" method="post" x-show="form_show" x-transition>
+                {% csrf_token %}
+                <span>新しい選択肢を追加する</span>
+                <input name="choice_text">
+                <button type="submit" form="choice_create">追加</button>
+            </form>
+        </div>
+    </fieldset>
 
     <h2>タイトル編集</h2>
     {% if messages %}
