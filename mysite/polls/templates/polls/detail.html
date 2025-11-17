@@ -39,15 +39,17 @@
                 maxlength="200" 
                 required="" 
                 x-model="form_text"
-                @input="text_empty = form_text == ''">
+            >
 
             <button type='button' @click="form_text='たとえば'">タイトルを入れる</button>
 
-            <div x-show="text_empty">error</div>
+            <div x-show="!form_text">error</div>
             {{ form.question_text.errors }}
+            <div>
+                <button type="submit" :disabled="!form_text">保存</button>
+            </div>
         </div>
 
-        <button type="submit">保存</button>
     </form>
 </div>
 
