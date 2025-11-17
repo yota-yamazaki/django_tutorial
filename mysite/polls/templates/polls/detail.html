@@ -2,6 +2,7 @@
 
 {% block content %}
 
+<a href="{% url 'polls:index' %}">戻る</a>
 <div x-data="{ question_text: '{{ question.question_text|escapejs }}' }">
     <form action="{% url 'polls:vote' question.id %}" method="post">
         {% csrf_token %}
@@ -13,7 +14,7 @@
             <label for="choice{{ forloop.counter }}">{{ choice.choice_text }}</label><br>
             {% endfor %}
         </fieldset>
-        <input type="submit" value="Vote">
+        <input type="submit" value="投票">
     </form>
 
     <h2>タイトル編集</h2>
@@ -43,7 +44,7 @@
 
             <button type='button' @click="form_text='たとえば'">タイトルを入れる</button>
 
-            <div x-show="!form_text">error</div>
+            <div x-show="!form_text">タイトルは1文字以上必要です</div>
             {{ form.question_text.errors }}
             <div>
                 <button type="submit" :disabled="!form_text">保存</button>
