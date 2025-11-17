@@ -2,19 +2,44 @@
 
 {% block content %}
 
-<form action="{% url 'polls:vote' question.id %}" method="post">
-{% csrf_token %}
-<fieldset>
-    <legend><h1>{{ question.question_text }}</h1></legend>
-    {% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
-    {% for choice in question.choice_set.all %}
-        <input type="radio" name="choice" id="choice{{ forloop.counter }}" value="{{ choice.id }}">
-        <label for="choice{{ forloop.counter }}">{{ choice.choice_text }}</label><br>
-    {% endfor %}
-</fieldset>
-<input type="submit" value="Vote">
-</form>
+<div x-data="{ question_text: '{{ question.question_text|escapejs }}' }">
+    <form action="{% url 'polls:vote' question.id %}" method="post">
+        {% csrf_token %}
+        <fieldset>
+            <legend><h1 x-text="question_text"></h1></legend>
+            {% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
+            {% for choice in question.choice_set.all %}
+            <input type="radio" name="choice" id="choice{{ forloop.counter }}" value="{{ choice.id }}">
+            <label for="choice{{ forloop.counter }}">{{ choice.choice_text }}</label><br>
+            {% endfor %}
+        </fieldset>
+        <input type="submit" value="Vote">
+    </form>
 
-<a href="{% url 'polls:edit' question.pk %}" class="">編集する</a>
+    <h2>タイトル編集</h2>
+    {% if messages %}
+    <ul class="messages">
+        {% for message in messages %}
+        <li class="{{ message.tags }}">{{ message }}</li>
+        {% endfor %}
+    </ul>
+    {% endif %}
+    <form action="{% url 'polls:update' question.id %}" method="post">
+        {% csrf_token %}
+
+        {% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
+        {% if flash_message %}<p><strong>{{ flash_message }}</strong></p>{% endif %}
+
+        <div x-data="{form_text:''}" x-modelable="form_text">
+            <label for="title_input">タイトル</label>
+            <input id="title_input" name="question_text" type="text" x-model="question_text" maxlength="200" required="" >
+
+            {{ form.question_text.errors }}
+        </div>
+
+        <button type="submit">保存</button>
+    </form>
+</div>
+
 
 {% endblock %}

@@ -1,9 +1,10 @@
 from django.db.models import F
 from django.http import HttpResponseRedirect
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, get_object_or_404, redirect
 from django.urls import reverse, reverse_lazy
 from django.views import generic
 from django.utils import timezone
+from django.contrib import messages
 from . import forms
 
 from .models import Question, Choice
@@ -28,16 +29,39 @@ class DetailView(generic.DetailView):
         """
         return Question.objects.filter(pub_date__lte=timezone.now())
 
-class EditView(generic.UpdateView):
-    model = Question
-    fields = ["question_text"]
-    form_model = forms.QuestionEditForm
-    template_name = "polls/edit.html"
-    success_url = reverse_lazy("polls:index")
-
 class ResultsView(generic.DetailView):
     model = Question
     template_name = "polls/results.html"
+
+def detail(request, pk):
+    question = get_object_or_404(Question, pk=pk)
+    quetion_text = question.question_text
+    form = forms.QuestionEditForm(instance=question)
+
+    return render(
+        request,
+        "polls/detail.html",
+        {
+            "question": question,
+            "form": form,
+            "question_text": quetion_text,
+        }
+    )
+
+def update(request, pk):
+    question = get_object_or_404(Question, pk=pk)
+
+    if request.method == 'POST':
+        form = forms.QuestionEditForm(request.POST, instance=question)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "更新しました！")
+            return redirect("polls:detail", pk=question.pk)
+    else:
+        form = forms.QuestionEditForm(instance=question)
+
+    return render(request, 'polls/detail.html', {"question": question, 'form': form})
+
 
 def vote(request, question_id):
     question = get_object_or_404(Question, pk=question_id)
