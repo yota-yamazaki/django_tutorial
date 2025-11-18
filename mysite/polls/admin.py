@@ -8,17 +8,16 @@ from .forms import ChoiceAdminForm
 
 from .models import Question, Choice
 
-class ChoiceInline(admin.StackedInline):
+class ChoiceInline(admin.TabularInline):
     model = Choice
     extra = 3
-    classes = ('grp-collapse grp-closed',)
-    inline_classes = ('grp-collapse grp-open',)
+    sortable_field_name = "position"
 
     def get_readonly_fields(self, request, obj=None):
         flag = True
         readonly = super().get_readonly_fields(request, obj)
 
-        obj.question_text
+        # obj.question_text
 
         if flag:
             readonly = ["votes"]
