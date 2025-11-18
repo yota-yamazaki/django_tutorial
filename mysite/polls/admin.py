@@ -5,13 +5,13 @@ from django.contrib import messages
 from django.utils.translation import ngettext
 from django.db.models import F
 from .forms import ChoiceAdminForm
+from grappelli.forms import GrappelliSortableHiddenMixin
 
 from .models import Question, Choice
 
-class ChoiceInline(admin.TabularInline):
+class ChoiceInline(GrappelliSortableHiddenMixin, admin.TabularInline):
     model = Choice
     extra = 3
-    sortable_field_name = "position"
 
     def get_readonly_fields(self, request, obj=None):
         flag = True
