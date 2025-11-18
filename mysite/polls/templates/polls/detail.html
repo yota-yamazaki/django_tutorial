@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 
-{% block content %}
+    {% block content %}
 
 <a href="{% url 'polls:index' %}">戻る</a>
 <div x-data="{ question_text: '{{ question.question_text|escapejs }}' }">
@@ -16,7 +16,7 @@
             <input type="submit" value="投票">
         </form>
 
-        <div x-data="choice_create_form">
+        <div x-data="form_hidden">
             <button type="button" x-show="!form_show" @click="toggle">＋</button>
             <button type="button" x-show="form_show" @click="toggle">閉じる</button>
             <form id="choice_create" action="{% url 'polls:choice_create' question.id %}" method="post" x-show="form_show" x-transition>
@@ -27,56 +27,60 @@
             </form>
         </div>
 
-        <script>
-        document.addEventListener('alpine:init', () => {
-            Alpine.data('choice_create_form', () => ({
-                form_show: false,
-
-                toggle() {
-                    this.form_show = ! this.form_show
-                }
-            }))
-        })
-        </script>
-
     </fieldset>
 
-    <h2>タイトル編集</h2>
-    {% if messages %}
-    <ul class="messages">
-        {% for message in messages %}
-        <li class="{{ message.tags }}">{{ message }}</li>
-        {% endfor %}
-    </ul>
-    {% endif %}
-    <form action="{% url 'polls:update' question.id %}" method="post">
-        {% csrf_token %}
+    <div x-data="form_hidden">
+        <button type="button" x-show="!form_show" @click="toggle">問いのタイトルを編集</button>
+        <button type="button" x-show="form_show" @click="toggle">閉じる</button>
+        {% if messages %}
+        <ul class="messages">
+            {% for message in messages %}
+            <li class="{{ message.tags }}">{{ message }}</li>
+            {% endfor %}
+        </ul>
+        {% endif %}
+        <form action="{% url 'polls:update' question.id %}" method="post" x-show="form_show" x-transition>
+            {% csrf_token %}
 
-        {% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
-        {% if flash_message %}<p><strong>{{ flash_message }}</strong></p>{% endif %}
+            {% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
+            {% if flash_message %}<p><strong>{{ flash_message }}</strong></p>{% endif %}
 
-        <div x-data="{form_text:'', text_empty: false}" x-modelable="form_text" x-model="question_text">
-            <label for="title_input">タイトル</label>
-            <input 
-                id="title_input" 
-                name="question_text" 
-                type="text" 
-                maxlength="200" 
-                required="" 
-                x-model="form_text"
-            >
+            <div x-data="{form_text:'', text_empty: false}" x-modelable="form_text" x-model="question_text">
+                <label for="title_input">タイトル</label>
+                <input 
+                    id="title_input" 
+                    name="question_text" 
+                    type="text" 
+                    maxlength="200" 
+                    required="" 
+                    x-model="form_text"
+                >
 
-            <button type='button' @click="form_text='たとえば'">タイトルを入れる</button>
+                <button type='button' @click="form_text='たとえば'">タイトルを入れる</button>
 
-            <div x-show="!form_text">タイトルは1文字以上必要です</div>
-            {{ form.question_text.errors }}
-            <div>
-                <button type="submit" :disabled="!form_text">保存</button>
+                <div x-show="!form_text">タイトルは1文字以上必要です</div>
+                {{ form.question_text.errors }}
+                <div>
+                    <button type="submit" :disabled="!form_text">保存</button>
+                </div>
             </div>
-        </div>
 
-    </form>
+        </form>
+    </div>
 </div>
+
+
+<script>
+document.addEventListener('alpine:init', () => {
+    Alpine.data('form_hidden', () => ({
+        form_show: false,
+
+        toggle() {
+            this.form_show = ! this.form_show
+        }
+    }))
+})
+</script>
 
 
 {% endblock %}
