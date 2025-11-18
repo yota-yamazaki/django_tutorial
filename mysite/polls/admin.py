@@ -12,6 +12,18 @@ class ChoiceInline(admin.TabularInline):
     model = Choice
     extra = 3
 
+    def get_readonly_fields(self, request, obj=None):
+        flag = True
+        readonly = super().get_readonly_fields(request, obj)
+
+        obj.question_text
+
+        if flag:
+            readonly = ["votes"]
+
+        return readonly
+
+
 class QuestionAdmin(admin.ModelAdmin):
     fieldsets = [
         (None, {"fields": ["question_text"]}),
@@ -26,6 +38,12 @@ class QuestionAdmin(admin.ModelAdmin):
 class ChoiceAdmin(admin.ModelAdmin):
     actions = ['increment_votes']
     form = ChoiceAdminForm
+
+    raw_id_fields = ('question',)
+    # define the related_lookup_fields
+    related_lookup_fields = {
+        'fk': ['question'],
+    }
 
     @admin.action(description="投票数を1増やします")
     def increment_votes(self, request, queryset):
