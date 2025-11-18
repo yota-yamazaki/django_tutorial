@@ -8,9 +8,11 @@ from .forms import ChoiceAdminForm
 
 from .models import Question, Choice
 
-class ChoiceInline(admin.TabularInline):
+class ChoiceInline(admin.StackedInline):
     model = Choice
     extra = 3
+    classes = ('grp-collapse grp-closed',)
+    inline_classes = ('grp-collapse grp-open',)
 
     def get_readonly_fields(self, request, obj=None):
         flag = True
