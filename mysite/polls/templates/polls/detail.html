@@ -16,9 +16,9 @@
             <input type="submit" value="投票">
         </form>
 
-        <div x-data="{ form_show: false }">
-            <button type="button" x-show="!form_show" @click="form_show = ! form_show">＋</button>
-            <button type="button" x-show="form_show" @click="form_show = ! form_show">閉じる</button>
+        <div x-data="choice_create_form">
+            <button type="button" x-show="!form_show" @click="toggle">＋</button>
+            <button type="button" x-show="form_show" @click="toggle">閉じる</button>
             <form id="choice_create" action="{% url 'polls:choice_create' question.id %}" method="post" x-show="form_show" x-transition>
                 {% csrf_token %}
                 <span>新しい選択肢を追加する</span>
@@ -26,6 +26,19 @@
                 <button type="submit" form="choice_create">追加</button>
             </form>
         </div>
+
+        <script>
+        document.addEventListener('alpine:init', () => {
+            Alpine.data('choice_create_form', () => ({
+                form_show: false,
+
+                toggle() {
+                    this.form_show = ! this.form_show
+                }
+            }))
+        })
+        </script>
+
     </fieldset>
 
     <h2>タイトル編集</h2>
