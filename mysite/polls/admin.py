@@ -33,8 +33,10 @@ class QuestionAdmin(admin.ModelAdmin):
     inlines = [ChoiceInline]
 
     list_display = ["question_text", "pub_date", "was_published_recently"]
-    list_filter = ["pub_date"]
+    list_filter = ["pub_date", "question_text"]
     search_fields = ["question_text"]
+    change_list_template = "admin/change_list_filter_confirm_sidebar.html"
+    change_list_filter_template = "admin/filter_listing.html"
 
 class ChoiceAdmin(admin.ModelAdmin):
     actions = ['increment_votes']
