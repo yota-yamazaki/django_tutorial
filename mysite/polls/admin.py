@@ -12,7 +12,7 @@ from .models import Question, Choice, Reservation
 
 class ChoiceInline(GrappelliSortableHiddenMixin, admin.TabularInline):
     model = Choice
-    extra = 3
+    extra = 0
     sortable_excludes = ("votes", "question")
 
 class ReservationInline(admin.TabularInline):
@@ -26,11 +26,18 @@ class QuestionAdmin(admin.ModelAdmin):
     ]
     inlines = [ChoiceInline, ReservationInline]
 
-    list_display = ["question_text", "pub_date", "was_published_recently"]
+    list_display = ["question_text", "pub_date", "was_published_recently", "choice_list"]
     list_filter = ["pub_date", "question_text"]
     search_fields = ["question_text"]
     change_list_template = "admin/change_list_filter_confirm_sidebar.html"
     change_list_filter_template = "admin/filter_listing.html"
+
+    def choice_list(self, obj):
+        items = []
+        if obj.choice_set is not None:
+            for c in obj.choice_set.all():
+                items.append(c.choice_text)
+        return items
 
     def get_readonly_fields(self, request, obj=None):
         readonly = list(super().get_readonly_fields(request, obj))
@@ -44,15 +51,17 @@ class QuestionAdmin(admin.ModelAdmin):
 
         return readonly
 
+    def get_queryset(self, request):
+        return super().get_queryset(request).prefetch_related("choice_set")
 
 class ChoiceAdmin(admin.ModelAdmin):
     actions = ['increment_votes']
+    list_display =['choice_text', 'votes']
 
     raw_id_fields = ('question',)
     # define the related_lookup_fields
-    related_lookup_fields = {
-        'fk': ['question'],
-    }
+    related_lookup_fields = {'fk': ['question'],}
+    form = ChoiceAdminForm
 
     @admin.action(description="投票数を1増やします")
     def increment_votes(self, request, queryset):
@@ -69,7 +78,10 @@ class ChoiceAdmin(admin.ModelAdmin):
             messages.SUCCESS,
         )
 
+class ReservationAdmin(admin.ModelAdmin):
+    list_display = ["reservation_number", "status"]
+
 polls_admin_site.register(Question, QuestionAdmin)
 polls_admin_site.register(Choice, ChoiceAdmin)
-polls_admin_site.register(Reservation)
+polls_admin_site.register(Reservation, ReservationAdmin)
 
