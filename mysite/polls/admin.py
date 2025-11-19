@@ -5,7 +5,7 @@ from mysite.admin import polls_admin_site
 from django.contrib import messages
 from django.utils.translation import ngettext
 from django.db.models import F
-from .forms import ChoiceAdminForm
+from .forms import ChoiceAdminForm, QuestionAdminForm
 from grappelli.forms import GrappelliSortableHiddenMixin
 
 from .models import Question, Choice, Reservation
@@ -31,6 +31,7 @@ class QuestionAdmin(admin.ModelAdmin):
     search_fields = ["question_text"]
     change_list_template = "admin/change_list_filter_confirm_sidebar.html"
     change_list_filter_template = "admin/filter_listing.html"
+    form = QuestionAdminForm
 
     def choice_list(self, obj):
         items = []
@@ -55,7 +56,7 @@ class QuestionAdmin(admin.ModelAdmin):
         return super().get_queryset(request).prefetch_related("choice_set")
 
 class ChoiceAdmin(admin.ModelAdmin):
-    actions = ['increment_votes']
+    actions = ['increment_votes', 'decrement_votes']
     list_display =['choice_text', 'votes']
 
     raw_id_fields = ('question',)
@@ -78,8 +79,25 @@ class ChoiceAdmin(admin.ModelAdmin):
             messages.SUCCESS,
         )
 
+    @admin.action(description="投票数を1減らします")
+    def decrement_votes(self, request, queryset):
+        updated = queryset.update(votes = F('votes')-1)
+
+        self.message_user(
+            request,
+            ngettext(
+                "%d question votes successfully decrement.",
+                "%d questions votes successfully decrement.",
+                updated,
+            )
+            % updated,
+            messages.SUCCESS,
+        )
+
+
 class ReservationAdmin(admin.ModelAdmin):
     list_display = ["reservation_number", "status"]
+    filter_horizontal = ("questions",)
 
 polls_admin_site.register(Question, QuestionAdmin)
 polls_admin_site.register(Choice, ChoiceAdmin)
