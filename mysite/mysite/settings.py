@@ -133,3 +133,6 @@ GRAPPELLI_ADMIN_TITLE = 'polls Administration'
 
 # 別ユーザーに切り替える機能を有効化
 GRAPPELLI_SWITCH_USER = True
+
+# django_tailwind
+TAILWIND_APP_NAME = "theme"
