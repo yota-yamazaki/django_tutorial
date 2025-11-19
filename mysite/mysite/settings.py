@@ -31,6 +31,7 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    'grappelli.dashboard',
     'grappelli',
     'polls.apps.PollsConfig',
     'django.contrib.admin',
@@ -131,3 +132,4 @@ GRAPPELLI_ADMIN_TITLE = 'polls Administration'
 
 # 別ユーザーに切り替える機能を有効化
 GRAPPELLI_SWITCH_USER = True
+GRAPPELLI_INDEX_DASHBOARD = 'dashboard.CustomIndexDashboard'
