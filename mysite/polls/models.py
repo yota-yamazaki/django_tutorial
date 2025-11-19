@@ -48,15 +48,9 @@ class Reservation(models.Model):
         CANCEL = 'キャンセル', 'キャンセル'
         CANCEL_NOT_CHECK_IN = 'ドタキャン', 'ドタキャン'
 
-    questions = models.ManyToManyField(Question)
+    questions = models.ManyToManyField(Question, blank=True)
     reservation_number = models.CharField(max_length=255, verbose_name="予約番号")
     status = models.TextField(max_length=255, choices=Status, verbose_name="ステータス")
-
-    def clean_question(self):
-        questions = self.cleaned_data.get("questions")
-        if not questions:
-            raise forms.ValidationError("少なくとも一つはquestionと結びつけてください。")
-        return questions
 
     def __str__(self):
         return self.reservation_number
