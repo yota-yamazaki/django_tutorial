@@ -19,8 +19,13 @@ class ChoiceAdminForm(ChoiceForm):
 class QuestionForm(forms.ModelForm):
     class Meta:
         model = models.Question
-        fields = ["question_text"]
+        fields = ["question_text",]
 
-class QuestionEditForm(QuestionForm):
+class QuestionAdminForm(QuestionForm):
     pass
 
+    def clean_question_text(self):
+        question_text = self.cleaned_data['question_text']
+        if "piyo" in question_text:
+            raise forms.ValidationError("テキストにはpiyoを入れないでください")
+        return question_text
