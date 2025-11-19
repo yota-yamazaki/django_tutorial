@@ -1,6 +1,7 @@
 from random import choice
 
 from django.contrib import admin
+from mysite.admin import polls_admin_site
 from django.contrib import messages
 from django.utils.translation import ngettext
 from django.db.models import F
@@ -68,7 +69,7 @@ class ChoiceAdmin(admin.ModelAdmin):
             messages.SUCCESS,
         )
 
-admin.site.register(Question, QuestionAdmin)
-admin.site.register(Choice, ChoiceAdmin)
-admin.site.register(Reservation)
+polls_admin_site.register(Question, QuestionAdmin)
+polls_admin_site.register(Choice, ChoiceAdmin)
+polls_admin_site.register(Reservation)
 
