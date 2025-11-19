@@ -2,11 +2,18 @@ from dataclasses import fields
 from django import forms
 from . import models
 
-class ChoiceAdminForm(forms.ModelForm):
+class ChoiceForm(forms.ModelForm):
+    class Meta:
+        model = models.Choice
+        fields = ["choice_text", "question"]
+
+class ChoiceAdminForm(ChoiceForm):
+    pass
+
     def clean_choice_text(self):
         choice_text = self.cleaned_data['choice_text']
-        if "hoge" in choice_text:
-            raise forms.ValidationError("テキストにはhogeを入れない！")
+        if "piyo" in choice_text:
+            raise forms.ValidationError("テキストにはpiyoを入れないでください")
         return choice_text
 
 class QuestionForm(forms.ModelForm):
@@ -17,7 +24,3 @@ class QuestionForm(forms.ModelForm):
 class QuestionEditForm(QuestionForm):
     pass
 
-class ChoiceForm(forms.ModelForm):
-    class Meta:
-        model = models.Choice
-        fields = ["choice_text"]
