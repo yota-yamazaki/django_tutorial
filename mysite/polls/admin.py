@@ -7,7 +7,7 @@ from django.db.models import F
 from .forms import ChoiceAdminForm
 from grappelli.forms import GrappelliSortableHiddenMixin
 
-from .models import Question, Choice
+from .models import Question, Choice, Reservation
 
 class ChoiceInline(GrappelliSortableHiddenMixin, admin.TabularInline):
     model = Choice
@@ -66,3 +66,5 @@ class ChoiceAdmin(admin.ModelAdmin):
 
 admin.site.register(Question, QuestionAdmin)
 admin.site.register(Choice, ChoiceAdmin)
+admin.site.register(Reservation)
+
