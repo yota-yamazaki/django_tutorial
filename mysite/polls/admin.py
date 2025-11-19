@@ -12,25 +12,18 @@ from .models import Question, Choice, Reservation
 class ChoiceInline(GrappelliSortableHiddenMixin, admin.TabularInline):
     model = Choice
     extra = 3
+    sortable_excludes = ("votes", "question")
 
-    def get_readonly_fields(self, request, obj=None):
-        flag = True
-        readonly = super().get_readonly_fields(request, obj)
-
-        # obj.question_text
-
-        if flag:
-            readonly = ["votes"]
-
-        return readonly
-
+class ReservationInline(admin.TabularInline):
+    model = Question.reservation_set.through
+    extra = 1
 
 class QuestionAdmin(admin.ModelAdmin):
     fieldsets = [
         (None, {"fields": ["question_text"]}),
         ("Date information", {"fields": ["pub_date"], "classes": ["grp-collapse grp-closed"]}),
     ]
-    inlines = [ChoiceInline]
+    inlines = [ChoiceInline, ReservationInline]
 
     list_display = ["question_text", "pub_date", "was_published_recently"]
     list_filter = ["pub_date", "question_text"]
@@ -40,7 +33,6 @@ class QuestionAdmin(admin.ModelAdmin):
 
 class ChoiceAdmin(admin.ModelAdmin):
     actions = ['increment_votes']
-    form = ChoiceAdminForm
 
     raw_id_fields = ('question',)
     # define the related_lookup_fields
@@ -62,7 +54,6 @@ class ChoiceAdmin(admin.ModelAdmin):
             % updated,
             messages.SUCCESS,
         )
-
 
 admin.site.register(Question, QuestionAdmin)
 admin.site.register(Choice, ChoiceAdmin)
