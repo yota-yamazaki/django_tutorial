@@ -33,6 +33,7 @@ ALLOWED_HOSTS = []
 INSTALLED_APPS = [
     'grappelli',
     'polls.apps.PollsConfig',
+    'head_office_app.apps.HeadOfficeAppConfig',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -129,7 +130,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 INTERNAL_IPS = ['127.0.0.1',]
 
-GRAPPELLI_ADMIN_TITLE = 'polls Administration'
+GRAPPELLI_ADMIN_TITLE = 'Administration'
 
 # 別ユーザーに切り替える機能を有効化
 GRAPPELLI_SWITCH_USER = True
