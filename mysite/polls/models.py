@@ -7,7 +7,7 @@ from django.contrib import admin
 class Question(models.Model):
 
     class Meta:
-        verbose_name = verbose_name_plural = '問'
+        verbose_name = verbose_name_plural = '設問'
 
 
     question_text = models.CharField(max_length=200)
@@ -33,6 +33,6 @@ class Choice(models.Model):
 
     class Meta:
         ordering = ['position']
-
+        verbose_name = verbose_name_plural = '選択肢'
     def __str__(self):
         return self.choice_text
