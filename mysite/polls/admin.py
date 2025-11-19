@@ -32,13 +32,14 @@ class QuestionAdmin(admin.ModelAdmin):
     change_list_filter_template = "admin/filter_listing.html"
 
     def get_readonly_fields(self, request, obj=None):
-        readonly = super().get_readonly_fields(request, obj)
+        readonly = list(super().get_readonly_fields(request, obj))
 
         if obj is None:
             return readonly
 
-        if obj.reservation_set.filter(status="完了").exists():
-            return ["question_text"]
+        if obj.reservation_set.filter(status__in=["予約", "チェックイン"]).exists():
+            readonly.append("question_text")
+            return readonly
 
         return readonly
 
