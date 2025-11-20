@@ -24,20 +24,14 @@ class QuestionForm(forms.ModelForm):
         model = models.Question
         fields = ["question_text",]
 
+    def clean_question_text(self):
+        question_text = self.cleaned_data['question_text']
+        if "piyo" in question_text:
+            raise forms.ValidationError("テキストにはpiyoを入れないでください")
+        return question_text
+
 class QuestionEditForm(QuestionForm):
     pass
 
-    def clean_question_text(self):
-        question_text = self.cleaned_data['question_text']
-        if "piyo" in question_text:
-            raise forms.ValidationError("テキストにはpiyoを入れないでください")
-        return question_text
-
 class QuestionAdminForm(QuestionForm):
     pass
-
-    def clean_question_text(self):
-        question_text = self.cleaned_data['question_text']
-        if "piyo" in question_text:
-            raise forms.ValidationError("テキストにはpiyoを入れないでください")
-        return question_text
