@@ -59,7 +59,15 @@ def update(request, pk):
         messages.success(request, "更新しました！")
         return redirect("polls:detail", pk=question.pk)
 
-    return render(request, 'polls/detail.html', {"question": question, 'form': form})
+    return render(
+        request,
+        'polls/detail.html',
+        {
+            "question": question,
+            'form': form,
+            'error_message': "設問名の更新に失敗しました"
+        }
+    )
 
 @require_POST
 def choice_create(request, question_id):
