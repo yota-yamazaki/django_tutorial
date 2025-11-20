@@ -36,6 +36,7 @@ class QuestionAdmin(admin.ModelAdmin):
     inlines = [ChoiceInline, ReservationInline]
 
     list_display = ["question_text", "pub_date", "was_published_recently", "choice_list"]
+    list_display_links = ["question_text", "choice_list"]
     list_filter = ["pub_date", "question_text"]
     search_fields = ["question_text"]
     change_list_template = "admin/change_list_filter_confirm_sidebar.html"
