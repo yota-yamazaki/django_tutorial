@@ -72,9 +72,6 @@
         x-transition
         class="space-y-3 rounded-lg border border-gray-200 bg-gray-50 px-4 py-3"
       >
-        <div class="text-xs text-red-600 mt-1">
-          {{ form.choice_text.errors }}
-        </div>
 
         {% csrf_token %}
         <span class="block text-sm font-medium text-gray-700 mb-1">新しい選択肢を追加する</span>
@@ -91,6 +88,9 @@
           >
             追加
           </button>
+        </div>
+        <div class="text-xs text-red-600 mt-1">
+          {{ form.choice_text.errors }}
         </div>
       </form>
     </div>
@@ -135,12 +135,6 @@
     >
       {% csrf_token %}
 
-      {% if error_message %}
-      <p class="text-sm font-medium text-red-600 bg-red-50 border border-red-100 rounded-lg px-3 py-2">
-        <strong>{{ error_message }}</strong>
-      </p>
-      {% endif %}
-
       {% if flash_message %}
       <p class="text-sm font-medium text-emerald-700 bg-emerald-50 border border-emerald-100 rounded-lg px-3 py-2">
         <strong>{{ flash_message }}</strong>
@@ -167,6 +161,13 @@
           placeholder="問いのタイトルを入力"
         >
 
+        <div x-show="!form_text" class="text-xs text-red-600 mt-1">
+          タイトルは1文字以上必要です
+        </div>
+        <div class="text-xs text-red-600 mt-1">
+          {{ form.question_text.errors }}
+        </div>
+
         <button
           type="button"
           @click="form_text='たとえば'"
@@ -174,13 +175,6 @@
         >
           タイトルを入れる
         </button>
-
-        <div x-show="!form_text" class="text-xs text-red-600 mt-1">
-          タイトルは1文字以上必要です
-        </div>
-        <div class="text-xs text-red-600 mt-1">
-          {{ form.question_text.errors }}
-        </div>
 
         <div class="pt-2">
           <button
