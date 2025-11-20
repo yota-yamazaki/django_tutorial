@@ -32,6 +32,7 @@ class QuestionAdmin(admin.ModelAdmin):
     change_list_template = "admin/change_list_filter_confirm_sidebar.html"
     change_list_filter_template = "admin/filter_listing.html"
     form = QuestionAdminForm
+    date_hierarchy = "pub_date"
 
     def choice_list(self, obj):
         items = []
