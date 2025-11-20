@@ -1,5 +1,6 @@
 {% load static %}
-{% load static tailwind_tags %}
+{% load tailwind_tags %}
+{% tailwind_css %}
 
 <!doctype html>
 <html lang="ja">
@@ -10,7 +11,6 @@
     <link rel="stylesheet" href="{% static 'polls/style.css' %}">
 
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
-    {% tailwind_css %}
   </head>
 
   <body>
