@@ -7,7 +7,11 @@ from django.contrib.auth.admin import UserAdmin
 
 User = get_user_model()
 
+class NewsAdmin(admin.ModelAdmin):
+    list_display =['title', 'content', 'store']
+    empty_value_display = "---"
+
 head_office_admin_site.register(Store)
-head_office_admin_site.register(News)
+head_office_admin_site.register(News, NewsAdmin)
 
 head_office_admin_site.register(User, UserAdmin)
