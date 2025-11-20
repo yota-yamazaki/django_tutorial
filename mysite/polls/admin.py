@@ -22,7 +22,16 @@ class ReservationInline(admin.TabularInline):
 class QuestionAdmin(admin.ModelAdmin):
     fieldsets = [
         (None, {"fields": ["question_text"]}),
-        ("Date information", {"fields": ["pub_date"], "classes": ["grp-collapse grp-closed"]}),
+        (
+            "Date information",
+            {
+                "fields": ["pub_date"],
+                "classes": ["grp-collapse grp-closed"],
+                "description": (
+                    "注意: <strong>pub_date</strong> は必須項目です"
+                ),
+            }
+        ),
     ]
     inlines = [ChoiceInline, ReservationInline]
 
