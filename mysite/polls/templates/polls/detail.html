@@ -1,86 +1,211 @@
 {% extends 'base.html' %}
 
-    {% block content %}
+  {% block content %}
 
-<a href="{% url 'polls:index' %}">戻る</a>
-<div x-data="{ question_text: '{{ question.question_text|escapejs }}' }">
-    <fieldset>
-        <form action="{% url 'polls:vote' question.id %}" method="post">
-            {% csrf_token %}
-            <legend><h1 x-text="question_text"></h1></legend>
-            {% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
-            {% for choice in question.choice_set.all %}
-            <input type="radio" name="choice" id="choice{{ forloop.counter }}" value="{{ choice.id }}">
-            <label for="choice{{ forloop.counter }}">{{ choice.choice_text }}</label><br>
-            {% endfor %}
-            <input type="submit" value="投票">
-        </form>
+<a href="{% url 'polls:index' %}" class="inline-flex items-center text-sm text-sky-600 hover:text-sky-700 hover:underline mb-4">
+  ← 戻る
+</a>
 
-        <div x-data="form_hidden">
-            <button type="button" x-show="!form_show" @click="toggle">＋</button>
-            <button type="button" x-show="form_show" @click="toggle">閉じる</button>
-            <form id="choice_create" action="{% url 'polls:choice_create' question.id %}" method="post" x-show="form_show" x-transition>
-                {% csrf_token %}
-                <span>新しい選択肢を追加する</span>
-                <input name="choice_text">
-                <button type="submit" form="choice_create">追加</button>
-            </form>
+<div x-data="{ question_text: '{{ question.question_text|escapejs }}' }" class="max-w-2xl mx-auto space-y-6">
+  <fieldset class="border border-gray-200 rounded-xl p-6 bg-white shadow-sm space-y-4">
+    <form action="{% url 'polls:vote' question.id %}" method="post" class="space-y-4">
+      {% csrf_token %}
+      <legend class="mb-2">
+        <h1 x-text="question_text" class="text-xl font-semibold text-gray-900"></h1>
+      </legend>
+
+      {% if error_message %}
+      <p class="text-sm font-medium text-red-600 bg-red-50 border border-red-100 rounded-lg px-3 py-2">
+        <strong>{{ error_message }}</strong>
+      </p>
+      {% endif %}
+
+      <div class="space-y-2">
+        {% for choice in question.choice_set.all %}
+        <label for="choice{{ forloop.counter }}" class="flex items-center gap-2 text-gray-800">
+          <input
+            type="radio"
+            name="choice"
+            id="choice{{ forloop.counter }}"
+            value="{{ choice.id }}"
+            class="h-4 w-4 border-gray-300 text-sky-600 focus:ring-sky-500"
+          >
+          <span>{{ choice.choice_text }}</span>
+        </label>
+        {% endfor %}
+      </div>
+
+      <div>
+        <input
+          type="submit"
+          value="投票"
+          class="inline-flex items-center justify-center rounded-lg border border-transparent bg-sky-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-sky-700 focus:outline-none focus:ring-2 focus:ring-sky-500 focus:ring-offset-2"
+        >
+      </div>
+    </form>
+
+    <div x-data="form_hidden" class="mt-4 border-t border-dashed border-gray-200 pt-4">
+      <div class="flex items-center gap-2 mb-3">
+        <button
+          type="button"
+          x-show="!form_show"
+          @click="toggle"
+          class="inline-flex items-center rounded-lg border border-gray-300 bg-white px-3 py-1.5 text-xs font-medium text-gray-700 hover:bg-gray-50"
+        >
+          ＋ 新しい選択肢を追加
+        </button>
+        <button
+          type="button"
+          x-show="form_show"
+          @click="toggle"
+          class="inline-flex items-center rounded-lg border border-gray-300 bg-white px-3 py-1.5 text-xs font-medium text-gray-700 hover:bg-gray-50"
+        >
+          閉じる
+        </button>
+      </div>
+
+      <form
+        id="choice_create"
+        action="{% url 'polls:choice_create' question.id %}"
+        method="post"
+        x-show="form_show"
+        x-transition
+        class="space-y-3 rounded-lg border border-gray-200 bg-gray-50 px-4 py-3"
+      >
+        <div class="text-xs text-red-600 mt-1">
+          {{ form.choice_text.errors }}
         </div>
 
-    </fieldset>
-
-    <div x-data="form_hidden">
-        <button type="button" x-show="!form_show" @click="toggle">問いのタイトルを編集</button>
-        <button type="button" x-show="form_show" @click="toggle">閉じる</button>
-        {% if messages %}
-        <ul class="messages">
-            {% for message in messages %}
-            <li class="{{ message.tags }}">{{ message }}</li>
-            {% endfor %}
-        </ul>
-        {% endif %}
-        <form action="{% url 'polls:update' question.id %}" method="post" x-show="form_show" x-transition>
-            {% csrf_token %}
-
-            {% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
-            {% if flash_message %}<p><strong>{{ flash_message }}</strong></p>{% endif %}
-
-            <div x-data="{form_text:'', text_empty: false}" x-modelable="form_text" x-model="question_text">
-                <label for="title_input">タイトル</label>
-                <input 
-                    id="title_input" 
-                    name="question_text" 
-                    type="text" 
-                    maxlength="200" 
-                    required="" 
-                    x-model="form_text"
-                >
-
-                <button type='button' @click="form_text='たとえば'">タイトルを入れる</button>
-
-                <div x-show="!form_text">タイトルは1文字以上必要です</div>
-                {{ form.question_text.errors }}
-                <div>
-                    <button type="submit" :disabled="!form_text">保存</button>
-                </div>
-            </div>
-
-        </form>
+        {% csrf_token %}
+        <span class="block text-sm font-medium text-gray-700 mb-1">新しい選択肢を追加する</span>
+        <div class="flex gap-2">
+          <input
+            name="choice_text"
+            class="flex-1 rounded-md border-gray-300 shadow-sm focus:border-sky-500 focus:ring-sky-500 text-sm"
+            placeholder="ここに入力"
+          >
+          <button
+            type="submit"
+            form="choice_create"
+            class="inline-flex items-center justify-center rounded-md bg-emerald-600 px-3 py-2 text-xs font-medium text-white shadow-sm hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2"
+          >
+            追加
+          </button>
+        </div>
+      </form>
     </div>
-</div>
+  </fieldset>
 
+  <div x-data="form_hidden" class="border border-gray-200 rounded-xl bg-white shadow-sm p-6 space-y-4">
+    <div class="flex items-center gap-2">
+      <button
+        type="button"
+        x-show="!form_show"
+        @click="toggle"
+        class="inline-flex items-center rounded-lg border border-gray-300 bg-white px-3 py-1.5 text-xs font-medium text-gray-700 hover:bg-gray-50"
+      >
+        設問のタイトルを編集
+      </button>
+      <button
+        type="button"
+        x-show="form_show"
+        @click="toggle"
+        class="inline-flex items-center rounded-lg border border-gray-300 bg-white px-3 py-1.5 text-xs font-medium text-gray-700 hover:bg-gray-50"
+      >
+        閉じる
+      </button>
+    </div>
+
+    {% if messages %}
+    <ul class="mt-3 space-y-2 text-sm">
+      {% for message in messages %}
+      <li class="{{ message.tags }} px-3 py-2 rounded-lg border text-gray-800 bg-gray-50">
+        {{ message }}
+      </li>
+      {% endfor %}
+    </ul>
+    {% endif %}
+
+    <form
+      action="{% url 'polls:update' question.id %}"
+      method="post"
+      x-show="form_show"
+      x-transition
+      class="space-y-4 mt-3"
+    >
+      {% csrf_token %}
+
+      {% if error_message %}
+      <p class="text-sm font-medium text-red-600 bg-red-50 border border-red-100 rounded-lg px-3 py-2">
+        <strong>{{ error_message }}</strong>
+      </p>
+      {% endif %}
+
+      {% if flash_message %}
+      <p class="text-sm font-medium text-emerald-700 bg-emerald-50 border border-emerald-100 rounded-lg px-3 py-2">
+        <strong>{{ flash_message }}</strong>
+      </p>
+      {% endif %}
+
+      <div
+        x-data="{form_text:'', text_empty: false}"
+        x-modelable="form_text"
+        x-model="question_text"
+        class="space-y-2"
+      >
+        <label for="title_input" class="block text-sm font-medium text-gray-700">
+          タイトル
+        </label>
+        <input 
+          id="title_input" 
+          name="question_text" 
+          type="text" 
+          maxlength="200" 
+          required
+          x-model="form_text"
+          class="block w-full rounded-md border-gray-300 shadow-sm focus:border-sky-500 focus:ring-sky-500 text-sm"
+          placeholder="問いのタイトルを入力"
+        >
+
+        <button
+          type="button"
+          @click="form_text='たとえば'"
+          class="inline-flex items-center rounded-md border border-gray-300 bg-white px-2.5 py-1.5 text-xs font-medium text-gray-700 hover:bg-gray-50"
+        >
+          タイトルを入れる
+        </button>
+
+        <div x-show="!form_text" class="text-xs text-red-600 mt-1">
+          タイトルは1文字以上必要です
+        </div>
+        <div class="text-xs text-red-600 mt-1">
+          {{ form.question_text.errors }}
+        </div>
+
+        <div class="pt-2">
+          <button
+            type="submit"
+            :disabled="!form_text"
+            class="inline-flex items-center justify-center rounded-md px-4 py-2 text-sm font-medium text-white shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2 transition
+            bg-sky-600 hover:bg-sky-700 focus:ring-sky-500 disabled:opacity-40 disabled:cursor-not-allowed"
+          >
+            保存
+          </button>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
 
 <script>
 document.addEventListener('alpine:init', () => {
-    Alpine.data('form_hidden', () => ({
-        form_show: false,
-
-        toggle() {
-            this.form_show = ! this.form_show
-        }
-    }))
+  Alpine.data('form_hidden', () => ({
+    form_show: false,
+    toggle() {
+      this.form_show = !this.form_show
+    }
+  }))
 })
 </script>
-
 
 {% endblock %}
