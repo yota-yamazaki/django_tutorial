@@ -6,6 +6,7 @@ from django.views import generic
 from django.utils import timezone
 from django.contrib import messages
 from . import forms
+from django.views.decorators.http import require_POST
 
 from .models import Question, Choice
 
@@ -48,58 +49,55 @@ def detail(request, pk):
         }
     )
 
+@require_POST
 def update(request, pk):
     question = get_object_or_404(Question, pk=pk)
 
-    if request.method == 'POST':
-        form = forms.QuestionEditForm(request.POST, instance=question)
-        if form.is_valid():
-            form.save()
-            messages.success(request, "更新しました！")
-            return redirect("polls:detail", pk=question.pk)
-    else:
-        form = forms.QuestionEditForm(instance=question)
+    form = forms.QuestionEditForm(request.POST, instance=question)
+    if form.is_valid():
+        form.save()
+        messages.success(request, "更新しました！")
+        return redirect("polls:detail", pk=question.pk)
 
     return render(request, 'polls/detail.html', {"question": question, 'form': form})
 
+@require_POST
 def choice_create(request, question_id):
     question = get_object_or_404(Question, pk=question_id)
     form = forms.ChoiceForm(request.POST)
+
     if form.is_valid():
         text = form.cleaned_data["choice_text"]
         Choice.objects.create(
             question=question,
             choice_text=text,
             )
-        return redirect("polls:detail", pk=question.pk)
-    else:
-        form = forms.ChoiceForm()
+        return redirect("polls:detail", pk=question.id)
 
-    return render(request, "polls/detail.html", {
-        "question": question,
-        "form": form,
-    })
-
-
+    return render(
+        request,
+        "polls/detail.html",
+        {
+            "question": question,
+            "form": form,
+            "error_message": "選択肢の追加に失敗しました",
+        },
+    )
 
 def vote(request, question_id):
     question = get_object_or_404(Question, pk=question_id)
     try:
         selected_choice = question.choice_set.get(pk=request.POST["choice"])
     except (KeyError, Choice.DoesNotExist):
-        # Redisplay the question voting form.
         return render(
             request,
             "polls/detail.html",
             {
                 "question": question,
-                "error_message": "You didn't select a choice.",
+                "error_message": "選択肢を選んでから投票してください",
             },
         )
     else:
         selected_choice.votes = F("votes") + 1
         selected_choice.save()
-        # Always return an HttpResponseRedirect after successfully dealing
-        # with POST data. This prevents data from being posted twice if a
-        # user hits the Back button.
-        return HttpResponseRedirect(reverse("polls:results", args=(question.id,)))
+        return redirect("polls:results", pk=question.id)
