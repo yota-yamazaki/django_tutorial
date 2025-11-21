@@ -10,5 +10,6 @@ dependencies = [
     "django-grappelli>=4.0.2",
     "django-tailwind[cookiecutter,honcho,reload]>=4.4.1",
     "pyright>=1.1.407",
+    "pytest-django>=4.11.1",
     "ruff>=0.14.3",
 ]
