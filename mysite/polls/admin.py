@@ -5,8 +5,9 @@ from mysite.admin import polls_admin_site
 from django.contrib import messages
 from django.utils.translation import ngettext
 from django.db.models import F
-from .forms import ChoiceAdminForm, QuestionAdminForm
+from .forms import ChoiceAdminForm, QuestionAdminForm, ReservationInlineFormSet
 from grappelli.forms import GrappelliSortableHiddenMixin
+from django.core.exceptions import ValidationError
 
 from .models import Question, Choice, Reservation
 
@@ -18,6 +19,7 @@ class ChoiceInline(GrappelliSortableHiddenMixin, admin.TabularInline):
 class ReservationInline(admin.TabularInline):
     model = Question.reservation_set.through
     extra = 1
+    formset = ReservationInlineFormSet
 
 class QuestionAdmin(admin.ModelAdmin):
     fieldsets = [
@@ -27,9 +29,6 @@ class QuestionAdmin(admin.ModelAdmin):
             {
                 "fields": ["pub_date"],
                 "classes": ["grp-collapse grp-closed"],
-                "description": (
-                    "注意: <strong>pub_date</strong> は必須項目です"
-                ),
             }
         ),
     ]
@@ -38,11 +37,12 @@ class QuestionAdmin(admin.ModelAdmin):
     list_display = ["question_text", "pub_date", "was_published_recently", "choice_list"]
     list_display_links = ["question_text", "choice_list"]
     list_filter = ["pub_date", "question_text"]
-    search_fields = ["question_text"]
+    search_fields = ["question_text",]
     change_list_template = "admin/change_list_filter_confirm_sidebar.html"
     change_list_filter_template = "admin/filter_listing.html"
     form = QuestionAdminForm
     date_hierarchy = "pub_date"
+    view_on_site = False
 
     def choice_list(self, obj):
         items = []
